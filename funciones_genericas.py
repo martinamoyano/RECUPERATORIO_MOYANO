@@ -81,10 +81,11 @@ def mostrar_lista(lista: list) -> None:
     - None
     """
     for elem in lista:
-        print(f'id: {elem['id_bike']} \n'
-              f'nombre: {elem['nombre']} \n'
-              f'tipo: {elem['tipo']} \n'
-              f'tiempo: {elem['tiempo']} \n')
+        print(f'ID: {elem['id']} \n'
+              f'USER: {elem['user']} \n'
+              f'LIKES: {elem['likes']} \n'
+              f'DISLIKES: {elem['dislikes']} \n'
+              f'FOLLOWERS: {elem['followers']} \n')
 
 def mostrar_diccionario(diccionario: dict) -> None:
     """
@@ -259,7 +260,7 @@ def swap_lista(lista:list, i:int, j: int)-> None:
     lista[i] = lista [j]
     lista [j] = auxiliar
 
-def ordenar_lista_campo(lista : list, criterio: str, descendente: bool = False):
+def ordenar_lista_campo(lista: list, criterio: str, descendente: bool = False):
     """
     Ordena una lista de diccionarios en función de un campo específico.
 
@@ -271,10 +272,21 @@ def ordenar_lista_campo(lista : list, criterio: str, descendente: bool = False):
     Returns:
     - None: La función no retorna ningún valor, pero ordena la lista en su lugar.
     """
-    for i in range (len(lista)-1):
-        for j in range (i+1, len(lista)):
-            if lista[i][criterio] > lista [j][criterio]:
-                swap_lista(lista, i, j)
+    if descendente == False:
+        for i in range (len(lista)-1):
+            for j in range (i+1, len(lista)):
+                if lista[i][criterio] > lista [j][criterio]:
+                    auxiliar = lista[i]
+                    lista[i] = lista [j]
+                    lista [j] = auxiliar
+    
+    else:
+        for i in range (len(lista)-1):
+            for j in range (i+1, len(lista)):
+                if lista[i][criterio] < lista [j][criterio]:
+                    auxiliar = lista[i]
+                    lista[i] = lista [j]
+                    lista [j] = auxiliar
 
 def ordenar_lista_doble_criterio(lista : list, primer_criterio: str, segundo_criterio:str):
     """

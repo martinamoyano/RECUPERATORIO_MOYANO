@@ -51,8 +51,9 @@ def parser_csv(path: str)-> list: #parser con readline pero sin re
                 diccionario = {
                 campo[0]: int (registro [0]),
                 campo[1]: registro [1],
-                campo[2]: registro [2],
+                campo[2]: int (registro [2]),
                 campo[3]: int (registro [3]),
+                campo[4] : int (registro [4])
                 }
                 lista.append (diccionario)
         return lista
@@ -96,15 +97,15 @@ def generar_csv(path: str, lista: list):
 
     Args:
     - path (str): Ruta del archivo CSV.
-    - lista (list): Lista de diccionarios a guardar en el archivo CSV. Cada diccionario debe contener las claves 
-      'id_bike', 'nombre', 'tipo', y 'tiempo'.
+    - lista (list): Lista de diccionarios a guardar en el archivo CSV. 
 
     Returns:
     - None
     """
     with open(path, "w", encoding="utf-8") as archivo:
+        archivo.write("id,user,likes,dislikes,followers \n")
         for elemento in lista:
-            linea = f"{elemento['id_bike']},{elemento['nombre']},{elemento['tipo']},{elemento['tiempo']}\n"
+            linea = f"{elemento['id']},{elemento['user']},{elemento['likes']},{elemento['dislikes']},{elemento['followers']}\n"
             archivo.write(linea)
 
 

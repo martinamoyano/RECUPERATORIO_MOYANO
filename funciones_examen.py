@@ -35,20 +35,22 @@ def imprimir_lista(lista: list):
         mostrar_lista(lista)
 
 # Asignar tiempos
-def asignar_tiempo_bicicleta(bicicleta)-> dict:
+def asignar_valores_posts(post)-> dict:
     """
-    Asigna un tiempo aleatorio entre 50 y 120 a la bicicleta.
+    Asigna valores aleatorios de likes entre 500 y 3000, dislikes con valores entre 300 y 3500 y followers entre 10000 y 20000.
 
     Args:
-    - bicicleta (dict): Diccionario que representa una bicicleta.
+    - post (dict): Diccionario que representa un post.
 
     Returns:
-    - dict: El diccionario de la bicicleta con el tiempo asignado.
+    - dict: El diccionario del post con el valor asignado.
     """
-    bicicleta['tiempo'] = randint(50, 120)
-    return bicicleta
+    post['likes'] = randint(500, 3000)
+    post['dislikes'] = randint(300, 3500)
+    post['followers'] = randint(10000, 20000)
+    return post
 
-def asignar_tiempos(lista:list)-> bool:
+def asignar_estadisticas(lista:list)-> bool:
     """
     Asigna tiempos a cada bicicleta en la lista utilizando una función de mapeo y muestra los resultados.
 
@@ -62,152 +64,169 @@ def asignar_tiempos(lista:list)-> bool:
     - TypeError: Si se produce un error durante la asignación de tiempos.
     """
     try:
-        lista_datos = map_list(asignar_tiempo_bicicleta, lista)
+        lista_datos = map_list(asignar_valores_posts, lista)
         mostrar_lista(lista_datos)
     except TypeError as e:
         print (e)
     if lista_datos:
-        tiempos_cargados = True
-    return tiempos_cargados
+        datos_cargados = True
+    return datos_cargados
 
-# Informar ganador
-def definir_ganador(lista: list) -> dict:
+# Informar POPULAR
+def definir_popular(lista: list) -> dict:
     """
-    Define el ganador de la carrera de bicicletas basándose en el menor tiempo.
+    Define el post más likeado de todos basándose en la mayor cantidad de likes.
 
     Args:
-    - lista (list): Lista de diccionarios que contiene información de bicicletas.
+    - lista (list): Lista de diccionarios que contiene información de posts.
 
     Returns:
-    - dict: Diccionario con el nombre del ganador y el tiempo si hay un único ganador,
-            o una lista de nombres y el tiempo si hay un empate.
+    - dict: Diccionario con el USER del más popular y la cantidad de likes si hay un único ganador,
+            o una lista de USERS y la cantidad de likes si hay un empate.
     """
-    ganador = calcular_minimo_dict(lista, "tiempo")
-    tiempo_ganador = ganador["tiempo"]
+    popular = calcular_maximo_dict(lista, "likes")
+    likes_popular = popular["likes"]
     
-    bicicletas_empatadas = []
-    for bicicleta in lista:
-        if bicicleta["tiempo"] == tiempo_ganador:
-            bicicletas_empatadas.append(bicicleta["nombre"])
+    users_empatados = []
+    for user in lista:
+        if user["likes"] == likes_popular:
+            users_empatados.append(user["user"])
 
-    if len(bicicletas_empatadas) == 1:
-        return {"Ganador": ganador["nombre"], "Tiempo": tiempo_ganador}
-    return {"Empate": bicicletas_empatadas, "Tiempo": tiempo_ganador}
+    if len(users_empatados) == 1:
+        return {"Más popular": popular["user"], "Likes": likes_popular}
+    return {"Más populares": users_empatados, "Likes": likes_popular}
 
-def informar_ganador(lista: list) -> dict:
+def informar_popular(lista: list) -> dict:
     """
-    Informa el resultado de la carrera, mostrando el ganador o los empatados en tiempo.
+    Informa el post más popular, mostrando el user o los users empatados en likes.
 
     Args:
-    - lista (list): Lista de diccionarios que contiene información de bicicletas.
+    - lista (list): Lista de diccionarios que contiene información de posts.
 
     Returns:
-    - dict: Diccionario con el resultado de la carrera, indicando el ganador o los empatados.
+    - dict: Diccionario con el post más likeado, indicando el más likeado o los empatados.
     """
-    resultado_carrera = definir_ganador(lista)
+    resultado = definir_popular(lista)
     print("------------------------------")
-    print("Resultado de la carrera")
+    print("POSTEO MÁS LIKEADO")
     print("------------------------------")
-    mostrar_diccionario(resultado_carrera)
+    mostrar_diccionario(resultado)
 
-# Filtrar por tipo
-def filtrar_por_tipo(lista: list) -> list | None:
+# Filtrar por likes
+def filtrar_por_likes(posts: list) -> list:
     """
-    Filtra una lista de bicicletas por tipo ingresado por el usuario.
+    Filtra los posts que tienen 2000 o más likes.
 
     Args:
-    - lista (list): Lista de diccionarios que contiene información de bicicletas.
+    - posts (list): Lista de diccionarios que contienen posts.
 
     Returns:
-    - list: Lista filtrada de diccionarios con el tipo de bicicleta solicitado.
+    - list: Lista filtrada que contiene solo los posts con 2000 o más likes.
     """
-    tipos = list(set(mapear_campo(lista, "tipo")))
-    tipo = input("Ingrese el tipo de bicicleta que desea filtrar [MTB, BMX, PLAYERA, PASEO]: ").upper()
+    lista_filtrada = []
+    for post in posts:
+        if post['likes'] > 2000:
+            lista_filtrada.append(post)
+    return lista_filtrada
 
-    if buscar_en_lista(tipos, tipo):
-        lista_filtrada = filtrar(lista, "tipo", tipo)
-        return lista_filtrada
-    else:
-        return None
-    
-def filtrar_bicicletas(lista: list):
+def filtrar_mejores_posts(lista: list):
     """
-    Filtra la lista de bicicletas por tipo y genera un archivo CSV con los resultados.
+    Filtra la lista de posts por los que tienen mas de 2000 likes.
 
     Args:
-    - lista (list): Lista de diccionarios que contienen información sobre bicicletas.
+    - lista (list): Lista de diccionarios que contienen los posts.
 
     Returns:
     - None: La función no retorna ningún valor, pero genera un archivo CSV si la lista filtrada es válida.
 
     Prints:
-    - Mensajes indicando el éxito de la operación o si el tipo de bicicleta no es válido.
+    - Mensajes indicando el éxito de la operación.
     """
-    lista_filtrada = filtrar_por_tipo(lista)
+    lista_filtrada = filtrar_por_likes(lista)
     if validar_lista(lista_filtrada):
-        primer_elemento = lista_filtrada[0]
-        tipo = primer_elemento["tipo"]
-        path = f"{tipo}.csv"
+        path = f"mejores_posts.csv"
         generar_csv(path, lista_filtrada)
         print(f"¡Archivo creado con exito en {path}!")
-    else:
-        print("TIPO DE BICICLETA NO VÁLIDO.")
 
-# Informar promedio por tipo
-def informar_promedio_tipo(lista: list) -> dict:
+# Filtrar por haters
+def filtrar_por_haters(posts: list) -> list:
     """
-    Calcula y muestra el promedio de tiempo por cada tipo de bicicleta en la lista.
+    Filtra los posts que tienen más dislikes que likes.
 
     Args:
-    - lista (list): Lista de diccionarios que contiene información de bicicletas.
+    - posts (list): Lista de diccionarios que contienen posts.
 
     Returns:
-    - dict: Diccionario con el tipo de bicicleta como clave y su promedio de tiempo como valor.
+    - list: Lista filtrada que contiene solo los posts que tienen más dislikes que likes.
     """
-    tipos = set(mapear_campo(lista, "tipo"))
-    promedios = {}
-
-    for tipo in tipos:
-        bicicletas_tipo = filtrar(lista, "tipo", tipo)
-        tiempos = mapear_campo(bicicletas_tipo, "tiempo")
-        if tiempos:
-            promedio = calcular_promedio(tiempos)
-        else:
-            promedio = 0
-        promedios[tipo] = promedio
-
-    return promedios
-
-# Mostrar las posiciones
-def mostrar_posiciones(lista:list)-> bool:
+    lista_filtrada = []
+    for post in posts:
+        if post['dislikes'] > post['likes']:
+            lista_filtrada.append(post)
+    return lista_filtrada
+    
+def filtrar_haters(lista: list):
     """
-    Ordena la lista de bicicletas por tipo y tiempo, y muestra las posiciones.
+    Filtra la lista por los posts que tienen más dislikes que likes.
 
     Args:
-    - lista (list): Lista de diccionarios que contienen información sobre bicicletas.
+    - lista (list): Lista de diccionarios que contienen los posts.
 
     Returns:
-    - bool: True si las posiciones se muestran correctamente.
+    - None: La función no retorna ningún valor, pero genera un archivo CSV si la lista filtrada es válida.
 
     Prints:
-    - Detalles de cada bicicleta ordenada por tipo y tiempo.
+    - Mensajes indicando el éxito de la operación.
     """
-    ordenar_lista_doble_criterio(lista, "tipo", "tiempo")
-    posiciones = True
-    for bicicleta in lista:
-        print(f'Tipo: {bicicleta["tipo"]}, Tiempo: {bicicleta["tiempo"]}')
-    return posiciones
+    lista_filtrada = filtrar_por_haters(lista)
+    if validar_lista(lista_filtrada):
+        path = f"haters.csv"
+        generar_csv(path, lista_filtrada)
+        print(f"¡Archivo creado con exito en {path}!")
 
-# Guardar posiciones
-def guardar_posiciones(lista: list):
+# Calcular promedio por tipo
+def calcular_promedio_followers(lista: list) -> float:
     """
-    Guarda las posiciones de las bicicletas en un archivo JSON llamado 'posiciones.json'.
+    Calcula y muestra el promedio followers en la lista de posts.
 
     Args:
-    - lista (list): Lista de diccionarios que contiene información de bicicletas.
+    - lista (list): Lista de diccionarios que contiene los posts.
+
+    Returns:
+    - promedio: devuelve el promedio de followers de los posts.
+    """
+    followers = mapear_campo(lista, 'followers')
+    promedio = calcular_promedio(followers)
+    promedio = int(promedio) #quito las comas
+
+    return promedio
+
+# Ordenar posts ascendente
+def ordenar_posts(lista:list)-> bool:
+    """
+    Ordena la lista de posts por 'user' ascendente.
+
+    Args:
+    - lista (list): Lista de diccionarios que contienen los posts.
+
+    Returns:
+    - lista_ordenada: Lista ordenada ascendentemente.
+    """
+    ordenar_lista_campo(lista, 'user')
+    
+    return lista
+
+# Guardar lista ordenada
+def guardar_lista_ordenada(lista: list):
+    """
+    Guarda la lista ordenada ascendentemente en un archivo JSON llamado 'posts_ordenados.json'.
+
+    Args:
+    - lista (list): Lista de diccionarios que contienen los posts.
 
     Returns:
     - None
     """
-    generar_json("posiciones.json", lista)
-    print("Posiciones guardadas en 'posiciones.json'.")
+    ordenar_posts(lista)
+    generar_json("posts_ordenados.json", lista)
+    print("Lista ordenada ascendentemente guardada en 'posts_ordenados.json'.")
